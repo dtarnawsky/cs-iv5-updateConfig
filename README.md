@@ -1,15 +1,10 @@
 # Test App
 
-Test app for Auth Connect (and soon Identity Vault)
+Test app for Identity Vault
 
-## Identity Vault Issue
-Comment out `lockAfterBackgrounded` property. When a call is made in Android (eg `lock`) an error occurs.
+Click "Create, Clear, UpdateConfig"
 
-## Angular Zone Quirk
-When Auth Connect events onLoginSuccess and OnLogout are fired they run outside ngZone. In AuthenticationService.ts line 29 a patch was needed: this.ngZone.run(() to ensure that the UI reflects the authenticated state.
+When UpdateConfig is called on iOS it will update the configuration to biometrics and does not show a biometric prompt.
 
-Reproduction Steps:
-- Comment the lines for this.ngZone.run(() in AuthenticationService.ts
-- Run the app, sign in and out several times
-- Notice that the state of authenticated doesnt update and buttons do not show/hide as expected
-- NgZone.IsInAngularZone() will return false  
+When UpdateConfig is called on Android it will show a biometric prompt even though the vault is not locked.
+
