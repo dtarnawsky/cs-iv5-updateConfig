@@ -1,0 +1,34 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons>
+      <ion-title>
+        Authenticated={{authenticationChange$ | async}}
+      </ion-title>
+      <ion-button [hidden]="(authenticationChange$ | async)" (click)="login()">Sign In</ion-button>
+      <ion-button [hidden]="(authenticationChange$ | async) === false" (click)="logout()">Sign Out</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Test</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div style="padding:25px">
+    <ion-button (click)="lock()">Lock</ion-button>
+    <ion-button (click)="unlock()">Unlock</ion-button>
+    <ion-button (click)="clear()">Clear</ion-button>
+    <ion-button (click)="refresh()">Refresh</ion-button>
+    <ion-button (click)="checkBio()">Check Bio</ion-button>
+    <ion-button (click)="getData()">Get Data</ion-button>
+    <ion-button (click)="setData()">Set Data</ion-button>
+    <ion-button (click)="useSecure(true)">Switch to Secure</ion-button>
+    <ion-button (click)="useSecure(false)">Switch to Bio</ion-button>
+    <ion-button (click)="setToPasscode()">Switch to Passcode</ion-button>
+    <ion-button (click)="testMigrate()">Test Migration</ion-button>
+    <ion-button (click)="testUpdate()">Create, Clear, UpdateConfig</ion-button>
+  </div>  
+</ion-content>

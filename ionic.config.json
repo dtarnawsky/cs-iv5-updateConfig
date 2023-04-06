@@ -1,0 +1,16 @@
+{
+  "name": "iv-test",
+  "integrations": {
+    "capacitor": {},
+    "enterprise": {
+      "keyId": 2470,
+      "productKey": "key_4dbef669f3824f688c7656eef3c8868d",
+      "appId": "0a182916",
+      "orgId": "3056f0e4-da1d-45ac-abcf-a487332e404f",
+      "registries": [
+        "@ionic-enterprise;https://registry.ionicframework.com/"
+      ]
+    }
+  },
+  "type": "angular"
+}
