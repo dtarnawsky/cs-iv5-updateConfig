@@ -115,4 +115,27 @@ export class Tab1Page implements OnInit {
     this.vaultService.switchPasscode();
   }
 
+  async testPasscode() {
+    const config = this.vaultService.config;
+    config.deviceSecurityType = DeviceSecurityType.Biometrics;
+    console.log('Vault change to biometrics...');
+    try {
+      await this.vaultService.updateConfig(config);
+      console.log('Vault changed to biometrics');
+    } catch (error) {
+      console.log('failed change to bio', error);
+
+      this.vaultService.clear();
+      config.type = VaultType.DeviceSecurity;
+      config.deviceSecurityType = DeviceSecurityType.SystemPasscode;
+      console.log('Changing vault from cleared to System Passcode...');
+      await this.vaultService.updateConfig(config);
+      console.log('Vault is System Passcode');
+      await this.vaultService.setData();
+      this.vaultService.lock();
+      await this.vaultService.getData();
+    }
+
+  }
+
 }
