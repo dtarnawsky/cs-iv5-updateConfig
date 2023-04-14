@@ -125,7 +125,7 @@ export class Tab1Page implements OnInit {
     } catch (error) {
       console.log('failed change to bio', error);
 
-      this.vaultService.clear();
+      await this.vaultService.clear();
       config.type = VaultType.DeviceSecurity;
       config.deviceSecurityType = DeviceSecurityType.SystemPasscode;
       console.log('Changing vault from cleared to System Passcode...');
