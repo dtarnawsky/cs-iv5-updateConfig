@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Device, DeviceSecurityType } from '@ionic-enterprise/identity-vault';
+import { Device, DeviceSecurityType, VaultType } from '@ionic-enterprise/identity-vault';
 import { Observable } from 'rxjs';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { VaultService } from '../vault.service';
@@ -47,22 +47,27 @@ export class Tab1Page implements OnInit {
     const config = this.vaultService.config;
     config.deviceSecurityType = DeviceSecurityType.Biometrics;
     console.log('Vault change to biometrics');
-    await this.vaultService.updateConfig(config);
+    try {
+      await this.vaultService.updateConfig(config);
+    } catch (error) {
+      console.log('Failed to update config to biometrics');
+      console.error(error);
+      console.log('Vault clear...');
+      await this.vaultService.clear();
+      console.log('Vault cleared');
 
-    console.log('Vault set data');
-    await this.vaultService.setData();
+      console.log('Vault change to secure storage...');
+      config.type = VaultType.SecureStorage;
+      config.deviceSecurityType = DeviceSecurityType.None;
+      await this.vaultService.updateConfig(config);
+      console.log('Vault changed to secure storage');
 
-    console.log('Vault clear');
-    await this.vaultService.clear();
+      console.log(`Vault is empty: ${await this.vaultService.isEmpty()}`);
 
-    console.log('Vault change to biometrics again');
-    await this.vaultService.updateConfig(config);
-
-    console.log(`Vault is empty: ${await this.vaultService.isEmpty()}`);
-
-    console.log(`Getting Data`);
-    const data = await this.vaultService.getData();
-    console.log(`done. Data is ${data}`);
+      console.log(`Getting Data`);
+      const data = await this.vaultService.getData();
+      console.log(`done. Data is ${data}`);
+    }
   }
 
   async refresh() {
