@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import {
   BrowserVault, Device, DeviceSecurityType,
-  IdentityVaultConfig, Vault, VaultType
+  IdentityVaultConfig, Vault, VaultErrorCodes, VaultType
 } from '@ionic-enterprise/identity-vault';
 import { Platform } from '@ionic/angular';
 
@@ -42,7 +42,16 @@ export class VaultService {
     });
     this.vault.onError((err) => {
       console.error('Vault error', err);
-      alert(err.code + ': ' + err.message);
+      if (err.code === VaultErrorCodes.InvalidatedCredential) {
+        console.log('Received the expected invalidated credentials');
+        this.config.type = VaultType.InMemory;
+        this.config.deviceSecurityType = DeviceSecurityType.None;
+        console.log('Before update config to in memory')
+        this.vault.updateConfig(this.config);
+        console.log('Completed update to in memory vault');
+      } else {
+        console.error(err.code + ': ' + err.message);
+      }
     });
     await Device.setHideScreenOnBackground(true);
   }
