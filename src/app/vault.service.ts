@@ -40,15 +40,17 @@ export class VaultService {
     this.vault.onUnlock(() => {
       console.log('Vault was unlocked');
     });
-    this.vault.onError((err) => {
+    this.vault.onError(async (err) => {
       console.error('Vault error', err);
       if (err.code === VaultErrorCodes.InvalidatedCredential) {
         console.log('Received the expected invalidated credentials');
         this.config.type = VaultType.InMemory;
         this.config.deviceSecurityType = DeviceSecurityType.None;
-        console.log('Before update config to in memory')
-        this.vault.updateConfig(this.config);
+        console.log('Before update config to in memory');
+        await this.vault.updateConfig(this.config);
         console.log('Completed update to in memory vault');
+        await this.vault.setValue('test', 'value');
+        console.log('Value was set');
       } else {
         console.error(err.code + ': ' + err.message);
       }
