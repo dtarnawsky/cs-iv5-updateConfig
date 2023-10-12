@@ -46,9 +46,11 @@ export class Tab1Page implements OnInit {
   async testUpdate(): Promise<void> {
     const config = this.vaultService.config;
     config.deviceSecurityType = DeviceSecurityType.Biometrics;
-    console.log('Vault change to biometrics');
+    config.type = VaultType.DeviceSecurity;
     try {
+      console.log('Vault change to biometrics...');
       await this.vaultService.updateConfig(config);
+      console.log('Vault changed to biometrics.');
     } catch (error) {
       console.log('Failed to update config to biometrics');
       console.error(error);
@@ -56,17 +58,17 @@ export class Tab1Page implements OnInit {
       await this.vaultService.clear();
       console.log('Vault cleared');
 
-      console.log('Vault change to secure storage...');
-      config.type = VaultType.SecureStorage;
-      config.deviceSecurityType = DeviceSecurityType.None;
+      console.log('Vault change to InMemory...');
+      config.type = VaultType.InMemory;
+      config.deviceSecurityType = DeviceSecurityType.Biometrics; // This is technically invalid
       await this.vaultService.updateConfig(config);
-      console.log('Vault changed to secure storage');
+      console.log('Vault changed to InMemory');
 
-      console.log(`Vault is empty: ${await this.vaultService.isEmpty()}`);
+      //console.log(`Vault is empty: ${await this.vaultService.isEmpty()}`);
 
-      console.log(`Getting Data`);
+      console.log(`Getting Data...`);
       const data = await this.vaultService.getData();
-      console.log(`done. Data is ${data}`);
+      console.log(`Got Data. Data is ${data}`);
     }
   }
 
@@ -103,8 +105,16 @@ export class Tab1Page implements OnInit {
   }
 
   async checkBio() {
-    const hasBio = await this.vaultService.hasBiometrics();
-    alert('Biometrics is ' + hasBio);
+    await this.vaultService.hasBiometrics();
+  }
+
+  async showPrompt() {
+    await this.vaultService.showBiometricPrompt();
+  }
+
+  async bioType() {
+    const res = await this.vaultService.getBioType();
+    alert('Biometrics retured ' + res);
   }
 
   async useSecure(enabled: boolean) {

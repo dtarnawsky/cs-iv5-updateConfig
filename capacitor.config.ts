@@ -4,10 +4,9 @@ const config: CapacitorConfig = {
   appId: 'io.ionic.iv.test',
   appName: 'iv-test',
   webDir: 'www',
-  bundledWebRuntime: false,
   plugins: {
     PushNotifications: {
-      presentationOptions: ["badge", "sound", "alert"]
+      presentationOptions: ['badge', 'sound', 'alert']
     }
   }
 };

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import {
+  AndroidBiometricCryptoPreference,
   BrowserVault, Device, DeviceSecurityType,
   IdentityVaultConfig, Vault, VaultErrorCodes, VaultType
 } from '@ionic-enterprise/identity-vault';
@@ -12,9 +13,10 @@ import { Platform } from '@ionic/angular';
 export class VaultService {
 
   config: IdentityVaultConfig = {
-    key: 'io.ionic.iv-test-bio5',
+    key: 'io.ionic.iv-test-bio6',
     type: VaultType.DeviceSecurity,
     deviceSecurityType: DeviceSecurityType.Biometrics,
+    androidBiometricsPreferStrongVaultOrSystemPasscode: AndroidBiometricCryptoPreference.StrongVault,
     lockAfterBackgrounded: 2000,
     shouldClearVaultAfterTooManyFailedAttempts: false,
     customPasscodeInvalidUnlockAttempts: 10,
@@ -30,7 +32,7 @@ export class VaultService {
   async init() {
     await this.platform.ready();
 
-    this.vault = Capacitor.getPlatform() === 'web' ? new BrowserVault(this.config) : new Vault(this.config);
+    this.vault = new Vault(this.config);
     this.vault.onConfigChanged(() => {
       console.log('Vault configuration was changed', this.config);
     });
@@ -43,18 +45,21 @@ export class VaultService {
     this.vault.onError(async (err) => {
       console.error('Vault error', err);
       if (err.code === VaultErrorCodes.InvalidatedCredential) {
+        console.log('vault locked?', await this.vault.isLocked());
+        console.log('vault empty?', await this.vault.isEmpty());
         console.log('Received the expected invalidated credentials');
         this.config.type = VaultType.InMemory;
         this.config.deviceSecurityType = DeviceSecurityType.None;
         console.log('Before update config to in memory');
         await this.vault.updateConfig(this.config);
         console.log('Completed update to in memory vault');
-        await this.vault.setValue('test', 'value');
+        await this.vault.setValue('blar', 'changed');
         console.log('Value was set');
       } else {
         console.error(err.code + ': ' + err.message);
       }
     });
+    await this.vault.initialize(this.config);
     await Device.setHideScreenOnBackground(true);
   }
 
@@ -94,7 +99,7 @@ export class VaultService {
       await this.vault.updateConfig(
         {
           key: 'io.ionic.iv-test-sysp',
-          type: VaultType.DeviceSecurity,
+          type: VaultType.CustomPasscode,
           deviceSecurityType: DeviceSecurityType.SystemPasscode,
           lockAfterBackgrounded: 2000,
           shouldClearVaultAfterTooManyFailedAttempts: false,
@@ -134,10 +139,14 @@ export class VaultService {
 
   async getData(): Promise<string> {
     console.log('Get Data....');
-    const data = await this.vault.getValue('blar');
+    try {
+      const data = await this.vault.getValue('blar');
 
-    console.log('Get Data', data);
-    return data;
+      console.log('Get Data', data);
+      return data;
+    } catch (err) {
+      console.error(`Failed to getData`, err);
+    }
   }
 
   async setData() {
@@ -161,5 +170,22 @@ export class VaultService {
 
   async hasBiometrics(): Promise<boolean> {
     return await Device.isBiometricsEnabled();
+  }
+
+  async getBioType(): Promise<string> {
+     const strength = await Device.getBiometricStrengthLevel();
+     const securehw = await Device.hasSecureHardware();
+     const hw = Device.getAvailableHardware();
+     return `${strength} ${securehw} ${JSON.stringify(hw)}`;
+  }
+
+  async showBiometricPrompt(): Promise<void> {
+    await Device.showBiometricPrompt({
+      androidBiometricsNegativeButtonText: 'Cancel',
+      androidBiometricsPromptTitle: 'Unlock',
+      iosBiometricsLocalizedCancelTitle: 'Cancel',
+      iosBiometricsLocalizedReason: 'Unlock',
+      //iosBiometricsLocalizedFallbackTitle: 'Use Passcode'
+    });
   }
 }
