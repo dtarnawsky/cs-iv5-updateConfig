@@ -18,21 +18,27 @@
   </ion-header>
 
   <div style="padding:25px">
+    <ion-text>{{plat}}</ion-text><br />
     <ion-button (click)="lock()">Lock</ion-button>
     <ion-button (click)="unlock()">Unlock</ion-button>
     <ion-button (click)="clear()">Clear</ion-button>
     <ion-button (click)="refresh()">Refresh</ion-button>
     <ion-button (click)="checkBio()">Check Bio</ion-button>
+    <ion-button (click)="isEmpty()">isEmpty?</ion-button>
+
     <ion-button (click)="showPrompt()">Show Biometric Prompt</ion-button>
     <ion-button (click)="bioType()">Get Bio Type</ion-button>
-    <ion-button (click)="getData()">Get Data</ion-button>    
+    <ion-button (click)="getData()">Get Data</ion-button>
     <ion-button (click)="setData()">Set Data</ion-button>
+    <ion-button (click)="getData(1000)">Get Data 1000x</ion-button>
+    <ion-button (click)="setData(1000)">Set Data 1000x</ion-button>
     <ion-button (click)="testPasscode()">Test SystemPasscode</ion-button>
     <ion-button (click)="useSecure(true)">Switch to Secure</ion-button>
     <ion-button (click)="useSecure(false)">Switch to Bio</ion-button>
     <ion-button (click)="setToPasscode()">Switch to Passcode</ion-button>
+    <ion-button (click)="verifyPasscode()">Verify Passcode</ion-button>
     <ion-button (click)="testMigrate()">Test Migration</ion-button>
     <ion-button (click)="testUpdate()">Create, Clear, UpdateConfig</ion-button>
-    
-  </div>  
+
+  </div>
 </ion-content>

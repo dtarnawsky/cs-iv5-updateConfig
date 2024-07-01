@@ -13,26 +13,23 @@ import { Platform } from '@ionic/angular';
 export class VaultService {
 
   config: IdentityVaultConfig = {
-    key: 'io.ionic.iv-test-bio6',
+    key: 'io.ionic.iv-test-bio8',
     type: VaultType.DeviceSecurity,
     deviceSecurityType: DeviceSecurityType.Biometrics,
-    androidBiometricsPreferStrongVaultOrSystemPasscode: AndroidBiometricCryptoPreference.StrongVault,
+    //androidBiometricsPreferStrongVaultOrSystemPasscode: AndroidBiometricCryptoPreference.StrongVault,
     lockAfterBackgrounded: 2000,
-    shouldClearVaultAfterTooManyFailedAttempts: false,
+    shouldClearVaultAfterTooManyFailedAttempts: true,
     customPasscodeInvalidUnlockAttempts: 10,
     unlockVaultOnLoad: false,
   };
 
   vault: Vault | BrowserVault;
 
-  constructor(private platform: Platform) {
-    this.init();
-  }
+  constructor(private platform: Platform) { }
 
   async init() {
-    await this.platform.ready();
-
-    this.vault = new Vault(this.config);
+    this.vault = new Vault();
+    await this.vault.initialize(this.config);
     this.vault.onConfigChanged(() => {
       console.log('Vault configuration was changed', this.config);
     });
@@ -45,22 +42,22 @@ export class VaultService {
     this.vault.onError(async (err) => {
       console.error('Vault error', err);
       if (err.code === VaultErrorCodes.InvalidatedCredential) {
+        console.log('Received the expected invalidated credentials');
         console.log('vault locked?', await this.vault.isLocked());
         console.log('vault empty?', await this.vault.isEmpty());
-        console.log('Received the expected invalidated credentials');
-        this.config.type = VaultType.InMemory;
-        this.config.deviceSecurityType = DeviceSecurityType.None;
-        console.log('Before update config to in memory');
-        await this.vault.updateConfig(this.config);
-        console.log('Completed update to in memory vault');
-        await this.vault.setValue('blar', 'changed');
-        console.log('Value was set');
+        // this.config.type = VaultType.InMemory;
+        // this.config.deviceSecurityType = DeviceSecurityType.None;
+        // console.log('Before update config to in memory');
+        // await this.vault.updateConfig(this.config);
+        // console.log('Completed update to in memory vault');
+        // await this.vault.setValue('blar', 'changed');
+        // console.log('Value was set');
       } else {
         console.error(err.code + ': ' + err.message);
       }
     });
-    await this.vault.initialize(this.config);
-    await Device.setHideScreenOnBackground(true);
+
+    //await Device.setHideScreenOnBackground(true);
   }
 
   async updateConfig(config: IdentityVaultConfig): Promise<void> {
@@ -72,6 +69,7 @@ export class VaultService {
     const data: any = '{\"_ionicAuth.authResponse.5x95216jDA3rl5NSx4nYEFJ-2fLuKhjl31KIyqy_etY\":{\"token_type\":\"Bearer\",\"scope\":\"membership_entitlements openid email profile\",\"refresh_token\":\"bcVpkO7Uhcyxsdq2YceosoDb5shlE5zrsjz3utpBp4I\",\"created_at\":1633621013,\"id_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlRFMldDOGlzb0UtQTlrNG9uc1NWdERNdlg2bmY3c2V3NjBveU5PNWNaMkkifQ.eyJpc3MiOiJodHRwczovL2F0ay1hdXRoLXN0YWdpbmcuaGVyb2t1YXBwLmNvbS8iLCJzdWIiOiI5NzczMzI2IiwiYXVkIjoiNXg5NTIxNmpEQTNybDVOU3g0bllFRkotMmZMdUtoamwzMUtJeXF5X2V0WSIsImV4cCI6MTYzMzYyMTEzMywiaWF0IjoxNjMzNjIxMDEzLCJub25jZSI6IjdYLlB0LjlRaFFHSS5reFRBNFB-IiwiZW1haWwiOiJhbGV4LnJpbmRvbmVAYW1lcmljYXN0ZXN0a2l0Y2hlbi5jb20iLCJmdWxsX25hbWUiOiJBbGV4IFJpbmRvbmUiLCJtZW1iZXJzaGlwX2VudGl0bGVtZW50cyI6eyJpZCI6OTc3MzMyNiwiZXh0ZXJuYWxfaWQiOm51bGwsImlzX25ldyI6ZmFsc2UsInJvbGUiOiJzdXBlci1hZG1pbiIsInBhY2thZ2VfbmFtZSI6Ik11bHRpLVNpdGUgTWVtYmVyc2hpcCIsInNlZ21lbnQiOiJtdWx0aXNpdGUiLCJhY3RpdmUiOlsiY29va2Jvb2tfY29sbGVjdGlvbiIsImF0ayIsImNjbyIsImNpbyJdfX0.s586aFZ6GLd1D3G3mAI8IxtizuOjSC8S79N-djuWxOJjheggiEirnGZTKVHtHJKpMMWw1GQDzcIM8v_Q9qxJ5ijEkncjhsW-izF_v3yu0O_Sm4PT6Z-bBC62Furr8q5WhBTdWj-a6okz5J0maBl5Qs60zX8a-bNYE6fl9GVudzIwG0UYv_Bf0jlJDgWV2eWS3ha0pmHyp40KvmW1Atsn4F50_VC-RkTJqqAjAWBtQgosY8Ow4rM4JP2Sa1amfxiED8pPg98PDkDBUh-Eki4gFj4ezJbQgwn74K6ybu45mi319ihXsatWb2IjSqU7FN-N6RDrWc21GBhaa7YIOgOdgA\",\"access_token\":\"qIGSWkyN9DZGS2Glvq0Qj85Lvm-i46NGrJSBGu8Or4A\",\"expires_in\":60},\"_ionicAuth.refreshToken.5x95216jDA3rl5NSx4nYEFJ-2fLuKhjl31KIyqy_etY\":\"bcVpkO7Uhcyxsdq2YceosoDb5shlE5zrsjz3utpBp4I\",\"_ionicAuth.accessToken.5x95216jDA3rl5NSx4nYEFJ-2fLuKhjl31KIyqy_etY\":\"qIGSWkyN9DZGS2Glvq0Qj85Lvm-i46NGrJSBGu8Or4A\",\"_ionicAuth.idToken.5x95216jDA3rl5NSx4nYEFJ-2fLuKhjl31KIyqy_etY\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlRFMldDOGlzb0UtQTlrNG9uc1NWdERNdlg2bmY3c2V3NjBveU5PNWNaMkkifQ.eyJpc3MiOiJodHRwczovL2F0ay1hdXRoLXN0YWdpbmcuaGVyb2t1YXBwLmNvbS8iLCJzdWIiOiI5NzczMzI2IiwiYXVkIjoiNXg5NTIxNmpEQTNybDVOU3g0bllFRkotMmZMdUtoamwzMUtJeXF5X2V0WSIsImV4cCI6MTYzMzYyMTEzMywiaWF0IjoxNjMzNjIxMDEzLCJub25jZSI6IjdYLlB0LjlRaFFHSS5reFRBNFB-IiwiZW1haWwiOiJhbGV4LnJpbmRvbmVAYW1lcmljYXN0ZXN0a2l0Y2hlbi5jb20iLCJmdWxsX25hbWUiOiJBbGV4IFJpbmRvbmUiLCJtZW1iZXJzaGlwX2VudGl0bGVtZW50cyI6eyJpZCI6OTc3MzMyNiwiZXh0ZXJuYWxfaWQiOm51bGwsImlzX25ldyI6ZmFsc2UsInJvbGUiOiJzdXBlci1hZG1pbiIsInBhY2thZ2VfbmFtZSI6Ik11bHRpLVNpdGUgTWVtYmVyc2hpcCIsInNlZ21lbnQiOiJtdWx0aXNpdGUiLCJhY3RpdmUiOlsiY29va2Jvb2tfY29sbGVjdGlvbiIsImF0ayIsImNjbyIsImNpbyJdfX0.s586aFZ6GLd1D3G3mAI8IxtizuOjSC8S79N-djuWxOJjheggiEirnGZTKVHtHJKpMMWw1GQDzcIM8v_Q9qxJ5ijEkncjhsW-izF_v3yu0O_Sm4PT6Z-bBC62Furr8q5WhBTdWj-a6okz5J0maBl5Qs60zX8a-bNYE6fl9GVudzIwG0UYv_Bf0jlJDgWV2eWS3ha0pmHyp40KvmW1Atsn4F50_VC-RkTJqqAjAWBtQgosY8Ow4rM4JP2Sa1amfxiED8pPg98PDkDBUh-Eki4gFj4ezJbQgwn74K6ybu45mi319ihXsatWb2IjSqU7FN-N6RDrWc21GBhaa7YIOgOdgA\"}';
     const ob = JSON.parse(data);
     console.log('before import');
+    console.log('stuff');
     await this.vault.importVault(ob);
     console.log('after import');
   }
@@ -82,10 +80,19 @@ export class VaultService {
 
   async switchPasscode() {
     try {
-      this.vault = new Vault(
+      this.vault = new Vault();
+      this.vault.onPasscodeRequested(async (isPasscodeSetRequest: boolean) => {
+        console.log('Passcode requested', isPasscodeSetRequest);
+        if (isPasscodeSetRequest) {
+          await this.vault.setCustomPasscode('1234');
+        } else {
+          await this.vault.setCustomPasscode('1234');
+        }
+      })
+      this.vault.initialize(
         {
-          key: 'io.ionic.iv-test-sysp',
-          type: VaultType.SecureStorage,
+          key: 'io.ionic.iv-test',
+          type: VaultType.CustomPasscode,
           deviceSecurityType: DeviceSecurityType.None,
           lockAfterBackgrounded: 2000,
           shouldClearVaultAfterTooManyFailedAttempts: false,
@@ -93,23 +100,33 @@ export class VaultService {
           unlockVaultOnLoad: false,
         }
       );
-      await this.vault.setValue('blar', 'stuff');
+      console.log('Call clear...');
+      this.vault.clear();
+      console.log('Call setValue...');
+      await this.vault.setValue('encryption_key', 'ccc66ced-f27c-4556-9b6d-3585e9953c29');
+      console.log('Called setValue. WE SHOULD GET HERE BUT NOT SEEING IT');
+      console.log('Call lock...');
+      await this.lock();
+      const result = await this.vault.getValue('encryption_key');
+      console.log('result', result);
 
-      // This code blows up on an iOS device without fingerprint/bio and only system passcode
-      await this.vault.updateConfig(
-        {
-          key: 'io.ionic.iv-test-sysp',
-          type: VaultType.CustomPasscode,
-          deviceSecurityType: DeviceSecurityType.SystemPasscode,
-          lockAfterBackgrounded: 2000,
-          shouldClearVaultAfterTooManyFailedAttempts: false,
-          customPasscodeInvalidUnlockAttempts: 10,
-          unlockVaultOnLoad: false,
-        }
-      );
+
     } catch (err) {
       alert(`${err.message} (Error Code: ${err.code})`);
     }
+  }
+
+  async verifyPasscode() {
+    await this.lock();
+    const result = await this.vault.getValue('encryption_key');
+    if (result == 'ccc66ced-f27c-4556-9b6d-3585e9953c29') {
+      alert('Expected result is good');
+    } else {
+      alert(`Error: vault doesnt have expected value. Has ${result}`);
+      console.error('result', result);
+    }
+
+
   }
 
   async lock() {
@@ -137,8 +154,8 @@ export class VaultService {
 
   }
 
-  async getData(): Promise<string> {
-    console.log('Get Data....');
+  async getData(info = ''): Promise<string> {
+    console.log(`Get Data${info}....`);
     try {
       const data = await this.vault.getValue('blar');
 
@@ -149,14 +166,28 @@ export class VaultService {
     }
   }
 
-  async setData() {
+  async setPasscode(passcode: string) {
     try {
-      console.log('Setting data...');
+      await this.vault.setCustomPasscode(passcode);
+    } catch (err) {
+      console.error('vault.service.ts setPasscode()', err);
+    }
+  }
+
+  async setData(info = '') {
+    try {
+      console.log(`Set Data${info}....`);
       await this.vault.setValue('blar', 'test');
       console.log('Data is set');
     } catch (err) {
       console.error('vault.service.ts setData()', err);
     }
+  }
+
+  public async delay(ms: number): Promise<void> {
+    return new Promise(resolve =>
+      setTimeout(resolve, ms)
+    );
   }
 
   async clear() {
@@ -173,10 +204,10 @@ export class VaultService {
   }
 
   async getBioType(): Promise<string> {
-     const strength = await Device.getBiometricStrengthLevel();
-     const securehw = await Device.hasSecureHardware();
-     const hw = Device.getAvailableHardware();
-     return `${strength} ${securehw} ${JSON.stringify(hw)}`;
+    const strength = await Device.getBiometricStrengthLevel();
+    const securehw = await Device.hasSecureHardware();
+    const hw = Device.getAvailableHardware();
+    return `${strength} ${securehw} ${JSON.stringify(hw)}`;
   }
 
   async showBiometricPrompt(): Promise<void> {

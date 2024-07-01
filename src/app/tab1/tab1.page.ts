@@ -3,6 +3,7 @@ import { Device, DeviceSecurityType, VaultType } from '@ionic-enterprise/identit
 import { Observable } from 'rxjs';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { VaultService } from '../vault.service';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-tab1',
@@ -12,6 +13,7 @@ import { VaultService } from '../vault.service';
 export class Tab1Page implements OnInit {
 
   public authenticationChange$: Observable<boolean>;
+  public plat = '';
 
   constructor(private authenticationService: AuthenticationService, private vaultService: VaultService) {
     this.authenticationChange$ = authenticationService.authenticationChange$;
@@ -19,6 +21,7 @@ export class Tab1Page implements OnInit {
   }
 
   ngOnInit() {
+    this.plat = Capacitor.getPlatform() + ' ' + Capacitor.isNativePlatform().toString();
   }
 
   async login(): Promise<void> {
@@ -96,16 +99,33 @@ export class Tab1Page implements OnInit {
     await this.vaultService.clear();
   }
 
-  async setData() {
-    await this.vaultService.setData();
+  async setData(repeats = 1) {
+
+    let count = 0;
+    while (count < repeats) {
+      count++;
+      await this.vaultService.setData(` x${count}`);
+      await this.vaultService.delay(Math.random() * 50);
+    }
   }
 
-  async getData() {
-    await this.vaultService.getData();
+  async getData(repeats = 1) {
+    let count = 0;
+    while (count < repeats) {
+      count++;
+      await this.vaultService.getData(` x${count}`);
+      await this.vaultService.delay(Math.random() * 50);
+    }
   }
 
   async checkBio() {
     await this.vaultService.hasBiometrics();
+  }
+
+  async isEmpty() {
+    const isEmpty = await this.vaultService.isEmpty();
+    console.log(`isEmpty is ${isEmpty}`);
+    alert(`isEmpty is ${isEmpty}`);
   }
 
   async showPrompt() {
@@ -125,27 +145,26 @@ export class Tab1Page implements OnInit {
     this.vaultService.switchPasscode();
   }
 
+  async verifyPasscode() {
+    this.vaultService.verifyPasscode();
+  }
+
   async testPasscode() {
     const config = this.vaultService.config;
-    config.deviceSecurityType = DeviceSecurityType.Biometrics;
-    console.log('Vault change to biometrics...');
     try {
-      await this.vaultService.updateConfig(config);
-      console.log('Vault changed to biometrics');
-    } catch (error) {
-      console.log('failed change to bio', error);
-
       await this.vaultService.clear();
       config.type = VaultType.DeviceSecurity;
       config.deviceSecurityType = DeviceSecurityType.SystemPasscode;
       console.log('Changing vault from cleared to System Passcode...');
       await this.vaultService.updateConfig(config);
       console.log('Vault is System Passcode');
+      console.log('Call setData...');
       await this.vaultService.setData();
       this.vaultService.lock();
       await this.vaultService.getData();
+    } catch (e) {
+      console.error(e);
     }
-
   }
 
 }

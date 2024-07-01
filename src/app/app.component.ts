@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NotificationsService } from './notifications.service';
+import { App } from '@capacitor/app';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +10,16 @@ import { NotificationsService } from './notifications.service';
 export class AppComponent {
   constructor(private notificationService: NotificationsService) {
     this.notificationService.register();
+    this.appEvents();
+  }
+
+  async appEvents() {
+    App.addListener('pause', () => {
+      console.log('pause');
+    });
+    App.addListener('resume', () => {
+      console.log('resume');
+    });
   }
 
 

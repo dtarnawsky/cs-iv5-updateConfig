@@ -9,52 +9,56 @@
     "build": "ng build && npx cap sync",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "prettify": "prettier \"**/*.{ts,html}\" --write",
+    "prepare": "husky install"
   },
   "private": true,
   "dependencies": {
-    "@angular/common": "^15.2.10",
-    "@angular/core": "^15.2.10",
-    "@angular/forms": "^15.2.10",
-    "@angular/platform-browser": "^15.2.10",
-    "@angular/platform-browser-dynamic": "^15.2.10",
-    "@angular/router": "^15.2.10",
-    "@capacitor/android": "5.5.0",
-    "@capacitor/app": "5.0.6",
-    "@capacitor/core": "5.5.0",
-    "@capacitor/haptics": "5.0.6",
-    "@capacitor/ios": "5.5.0",
-    "@capacitor/keyboard": "5.0.6",
-    "@capacitor/push-notifications": "5.1.0",
+    "8": "^0.0.1",
+    "@angular/common": "^18.0.5",
+    "@angular/core": "^18.0.5",
+    "@angular/forms": "^18.0.5",
+    "@angular/platform-browser": "^18.0.5",
+    "@angular/platform-browser-dynamic": "^18.0.5",
+    "@angular/router": "^18.0.5",
+    "@capacitor/android": "6.1.0",
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/haptics": "^6.0.0",
+    "@capacitor/ios": "6.1.0",
+    "@capacitor/keyboard": "^6.0.0",
+    "@capacitor/push-notifications": "^6.0.0",
     "@ionic-enterprise/auth": "3.10.4",
-    "@ionic-enterprise/identity-vault": "5.12.1",
-    "@ionic/angular": "7.5.0",
-    "@ionic/cli": "7.1.1",
+    "@ionic-enterprise/identity-vault": "5.12.4",
+    "@ionic/angular": "8.2.4",
+    "@ionic/cli": "7.2.0",
     "rxjs": "7.8.1",
     "tslib": "^2.0.0",
-    "zone.js": "~0.11.4"
+    "zone.js": "~0.14.2"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^15.2.10",
-    "@angular-eslint/builder": "~12.7.0",
-    "@angular-eslint/eslint-plugin": "~12.7.0",
-    "@angular-eslint/eslint-plugin-template": "~12.7.0",
-    "@angular-eslint/template-parser": "~12.7.0",
-    "@angular/cli": "^15.2.10",
-    "@angular/compiler": "^15.2.10",
-    "@angular/compiler-cli": "^15.2.10",
-    "@angular/language-service": "^15.2.10",
-    "@capacitor/cli": "5.5.0",
-    "@ionic/angular-toolkit": "10.0.0",
+    "@angular-devkit/build-angular": "^18.0.6",
+    "@angular-eslint/builder": "18.1.0",
+    "@angular-eslint/eslint-plugin": "18.1.0",
+    "@angular-eslint/eslint-plugin-template": "18.1.0",
+    "@angular-eslint/template-parser": "18.1.0",
+    "@angular/cli": "^18.0.6",
+    "@angular/compiler": "^18.0.5",
+    "@angular/compiler-cli": "^18.0.5",
+    "@angular/language-service": "^18.0.5",
+    "@capacitor/cli": "6.1.0",
+    "@ionic/angular-toolkit": "11.0.1",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.11.1",
-    "@typescript-eslint/eslint-plugin": "4.16.1",
-    "@typescript-eslint/parser": "4.16.1",
-    "eslint": "^7.6.0",
-    "eslint-plugin-import": "2.22.1",
-    "eslint-plugin-jsdoc": "30.7.6",
+    "@typescript-eslint/eslint-plugin": "^7.15.0",
+    "@typescript-eslint/parser": "^7.15.0",
+    "eslint": "^9.6.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsdoc": "^48.5.0",
     "eslint-plugin-prefer-arrow": "1.2.2",
+    "husky": "8.0.3",
     "jasmine-core": "4.0.1",
     "jasmine-spec-reporter": "7.0.0",
     "karma": "6.3.17",
@@ -63,8 +67,32 @@
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.7.0",
+    "lint-staged": "15.2.0",
+    "prettier": "3.1.1",
     "ts-node": "~8.3.0",
-    "typescript": "~4.9.5"
+    "typescript": "~5.4.5"
   },
-  "description": "An Ionic project"
+  "description": "",
+  "browserslist": [
+    "Chrome >=61",
+    "ChromeAndroid >=60",
+    "Firefox >=63",
+    "Firefox ESR",
+    "Edge >=79",
+    "Safari >=13",
+    "iOS >=13"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "npx lint-staged && npm run lint"
+    }
+  },
+  "lint-staged": {
+    "*.{css,html,js,jsx,scss,ts,tsx}": [
+      "prettier --write"
+    ],
+    "*.{md,json}": [
+      "prettier --write"
+    ]
+  }
 }
