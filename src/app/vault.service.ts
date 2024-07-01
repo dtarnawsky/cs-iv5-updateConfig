@@ -104,7 +104,7 @@ export class VaultService {
       this.vault.clear();
       console.log('Call setValue...');
       await this.vault.setValue('encryption_key', 'ccc66ced-f27c-4556-9b6d-3585e9953c29');
-      console.log('Called setValue. WE SHOULD GET HERE BUT NOT SEEING IT');
+      console.log('Called setValue.');
       console.log('Call lock...');
       await this.lock();
       const result = await this.vault.getValue('encryption_key');
